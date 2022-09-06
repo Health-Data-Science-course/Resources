@@ -2,5 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
-.Rproj
-.pptx
+Resources.Rproj
+*.pptx
