@@ -1,8 +1,20 @@
+
+# Remember to run the below commands only once to install the libraries.
+# You don't have to install them every time, but you have to load them once per session
+
+# install.packages("tidyverse")
+# install.packages("lubridate")
+# install.packages("here")
+# install.packages("skimr")
+
 #### Load the libraries ----
 library(tidyverse)
 library(lubridate)
 library(here) # tells us where the working directory starts, useful when you are working with downloaded data on your device 
 library(skimr)
+
+# Remember if you get an error like this -> "Error: package or namespace load failed for '[name of the package]' in loadNamespace
+# to install the package with install.packages()
 
 #can also get working directory with 
 getwd()
@@ -12,11 +24,12 @@ getwd()
 ## heart disease mortality by health board, heart disease activity by health board, & health board look up codes 
 
 # load data from a saved file 
-mortality_raw <- read_csv(here::here("./data/heartdisease_mortalitybyhbr.csv"))
+mortality_raw <- read_csv(here::here("Tutorial 1 - Week 2/hd_mortalitybyhbr.csv"))
 ### note: there is a deprecated function in the lubridate packaged called here which can cause problems sometimes
 ### so it is best to specify you want to use here from the here package. Loading the libraries with here last will also avoid this problem  
 
 # for your own practice, the webpage to download the mortality data is https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/dc0512a8-eb49-43b9-84f1-17ef95365d57/download/hd_mortalitybyhbr.csv
+# If you are getting an error with the path - change the "Tutorial 1 - Week 2/hd_mortalitybyhbr.csv" which is the file path.
 
 # load data from a website 
 activity_raw <- read_csv("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/748e2065-b447-4b75-99bd-f17f26f3eaef/download/hd_activitybyhbr.csv")
