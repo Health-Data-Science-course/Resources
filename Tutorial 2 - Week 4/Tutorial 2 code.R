@@ -114,7 +114,7 @@ cancelled_table %>%
          TotalCancelledYear,
          TotalOperationsYear,
          PercentCancelled) %>%
-  # create the gt table object
+  # create the kable table object
   knitr::kable(
     "simple",
     col.names = c(
