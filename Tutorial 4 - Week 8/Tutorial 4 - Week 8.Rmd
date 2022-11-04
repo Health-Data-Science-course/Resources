@@ -1,0 +1,253 @@
+---
+title: "Tutorial 4 - Week 8"
+author: "Dimitrios Doudesis"
+date: "`r format(Sys.time(), '%d-%m-%Y')`"
+output: 
+  pdf_document:
+    toc: true 
+    toc_depth: 3
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+ 
+
+# Practice Document
+
+For this demonstration, we will be using the Heart Disease datasets which are openly available from Public Heath Scotland. In particular, we will be focusing on the on the mortality rates dataset. 
+
+```{r libraries, message=FALSE, warning=FALSE, tidy.opts=list(width.cutoff=80), tidy = TRUE}
+# Note: the above works for code generally and comments, but does not work for strings such as the URL. Additionally, don't forget to install the formatR package if you plan to use this! 
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(kableExtra)
+library(formatR)
+
+# very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long comment 
+```
+
+## But first an aside...
+
+When knitting to PDF, you can wrap the code and comments using the `formatR` package and the arguments `tidy.opts=list(width.cutoff=80), tidy = TRUE` (see the output for the very...very long comment when knitted). However, this does not wrap strings, such as URLs due to LaTeX specific issues. There are very complicated ways around this, which we will not be covering as it requires other coding knowledge, but Kevin and Brittany have come up with 2 possible (though convoluted) solutions. For the Programming Assignment, the easiest solution may be to load the data from a saved file instead. 
+
+### Brittany's solution 
+
+When you are writing code chunks and R leaves a blank space  in the line number when the code is wrapped (e.g. line 64, blank space, line 65). When knitting to HTML the knitted document reflects this, unfortunately not the case when knitting to PDF. To unwrap the code, click enter at the beginning of the link without the number. This **however** means that the URL is not longer able to run without error. So, in a convoluted work around, you could have a chunk set to `eval=FALSE` meaning the code is not run but the knitted document shows the code. Then you could include a chunk below which will actually load the data (i.e., the code is run) but not show this in the knitted document (`echo=FALSE`)... convoluted as I said. 
+
+```{r Brittany-load-data, eval=FALSE}
+## Read in the 3 datasets
+# Heart Disease Activity By Health Board
+activity_raw <- read_csv("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba
+                      -2b7e55688253/resource/748e2065-b447-4b75-99bd-f17f26f3eaef/downl
+                      oad/hd_activitybyhbr.csv")
+
+# Heart Disease Mortality By Health Board
+mortality_raw <- read_csv("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa
+                      -b1ba-2b7e55688253/resource/dc0512a8-eb49-43b9-84f1-17ef95365d5
+                      7/download/hd_mortalitybyhbr.csv")
+
+# Health Board look up 
+hb <- read_csv("https://www.opendata.nhs.scot/dataset/9f942fdb-e59e-44f5-b534-
+               d6e1729cc7b/resource/652ff726-e676-4a20-abda-435b98dd7bdc/download/hb1
+               _hb21.csv")
+
+```
+
+```{r Brittany-load-data-for-real, echo=FALSE, message=FALSE}
+activity_raw <- read_csv("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/748e2065-b447-4b75-99bd-f17f26f3eaef/download/hd_activitybyhbr.csv")
+
+mortality_raw <- read_csv("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/dc0512a8-eb49-43b9-84f1-17ef95365d57/download/hd_mortalitybyhbr.csv")
+
+hb <- read_csv("https://www.opendata.nhs.scot/dataset/9f942fdb-e59e-44f5-b534-d6e17229cc7b/resource/652ff726-e676-4a20-abda-435b98dd7bdc/download/hb14_hb21.csv")
+```
+
+### Kevin's solution 
+
+Kevin's solution is slightly different: for each data set, add a variable such as `link1, echo=FALSE` and then use it in the code to be printed. If you adopt this method, for reproducibility sake, in the text you could include the full URL to be printed out. For example: 
+
+>The heart disease activity dataset was from the Public Health Scotland website: https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/748e2065-b447-4b75-99bd-f17f26f3eaef/download/hd_activitybyhbr.csv 
+
+or 
+
+>The hearth disease activity dataset downloads from [link1]("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/748e2065-b447-4b75-99bd-f17f26f3eaef/download/hd_activitybyhbr.csv")
+
+```{r kevin-save-data, echo=FALSE}
+link1 <- "https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/748e2065-b447-4b75-99bd-f17f26f3eaef/download/hd_activitybyhbr.csv"
+```
+
+>Data from `r link1`
+
+```{r kevin-load-data, message=FALSE}
+activity_raw2 <- read_csv(link1)
+```
+
+## Data Wrangling 
+```{r inspect-data}
+activity_raw %>%
+  glimpse() 
+```
+
+
+```{r data-wrangling}
+activity <- activity_raw %>%
+  left_join(hb, by = c("HBR" = "HB")) %>%
+  select(FinancialYear, 
+         HBName, 
+         AdmissionType,
+         AgeGroup,
+         Sex,
+         Diagnosis,
+         NumberOfDischarges) %>%
+  clean_names() %>%
+  separate(financial_year, into = c("Year", NA), sep = "/", convert = TRUE) %>%
+  mutate(sex = str_replace(sex, "Females", "Female"), 
+         sex = str_replace(sex, "Males", "Male")) %>%
+  filter(sex            != "All",
+         age_group      != "All",
+         admission_type != "All",
+         hb_name        != "S92000003")
+
+mortality <- mortality_raw %>%
+  left_join(hb, by = c("HBR" = "HB")) %>%
+  select(Year, 
+         HBName, 
+         AgeGroup,
+         Sex,
+         Diagnosis,
+         NumberOfDeaths) %>%
+  clean_names() %>%
+  mutate(sex = str_replace(sex, "Females", "Female"), 
+         sex = str_replace(sex, "Males", "Male")) %>%
+  filter(sex       != "All",
+         age_group != "All",
+         hb_name   != "S92000003")
+```
+
+Is the activity dataset in long or wide format? 
+
+```{r data-table}
+activity %>%
+  head(n = 10)
+```
+
+
+## Data Visualization 
+
+### How might we visualize the following: Since 2010, what influence does gender have on the rate of death for different diagnoses for those aged 75+ vs those under 75?
+
+There are at least 2 different coding approaches you can take to this: 
+
+1. Create a separate data frame for plotting, which you can then reuse for other plots or tables. 
+```{r plot-prep-plot, message=FALSE}
+mortality_plot <- mortality %>%
+  filter(year >= 2015,
+         age_group %in% c("under75 years", "75plus years")) %>%
+  group_by(diagnosis, sex, age_group, year) %>%
+  summarise(total_deaths = sum(number_of_deaths, na.rm=TRUE)) %>%
+  #wrap string "Coronary Heart Disease" for better plotting 
+  mutate(diagnosis = str_wrap(diagnosis, width = 15)) 
+
+mortality_plot %>%
+  ggplot(aes(x = year, y = total_deaths, color = sex)) + 
+  geom_line(aes(linetype = diagnosis), lwd = 1) + 
+  facet_wrap(~age_group) + 
+  labs(title = "Rate of Death due to Heart Disease Across Scotland",
+       subtitle = "2015-2019",
+       caption = "Data source: Public Health Scotland",
+       y = "Total Deaths",
+       x = "Year",
+       color = "Sex",
+       linetype = "Diagnosis") + 
+  theme_bw() 
+  
+```
+
+2. Pipe the data into the `ggplot` but do some data wrangling first.
+
+```{r piped-plot, message=FALSE}
+mortality %>%
+  filter(year >= 2015,
+         age_group %in% c("under75 years", "75plus years")) %>%
+  group_by(diagnosis, sex, age_group, year) %>%
+  summarise(total_deaths = sum(number_of_deaths, na.rm=TRUE)) %>%
+  #wrap string "Coronary Heart Disease" for better plotting 
+  mutate(diagnosis = str_wrap(diagnosis, width = 15)) %>%
+  ggplot(aes(x = diagnosis, y = total_deaths, fill = sex)) + 
+  geom_col(position = "dodge") + 
+  facet_grid(age_group~year) + 
+  #compare facet_grid to facet_wrap 
+  #facet_wrap(~age_group~year) + 
+  labs(title = "Rate of Death due to Heart Disease Across Scotland",
+       subtitle = "2015-2019",
+       caption = "Data source: Public Health Scotland",
+       y = "Total Deaths",
+       x = "Diagnosis",
+       fill = "Sex") + 
+  coord_flip() +
+  theme_bw() + 
+  #adjust the text on the x axis to be more legible 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+\pagebreak
+
+### What about a table? 
+
+For analysis and data visualisation, tidy data (i.e., long data) is the ideal. However, for tables often wide data is more readable. 
+
+```{r table}
+mortality_plot %>% 
+  pivot_wider(names_from = diagnosis, values_from = total_deaths) %>%
+  ungroup()%>% 
+  kbl()
+```
+
+\pagebreak
+
+Aesthitics changes to the table
+
+```{r table-final, tidy.opts=list(width.cutoff=80)}
+#remember the mortality plot data is grouped, so we may want to ungroup the data first before creating the table 
+mortality_plot %>%
+  pivot_wider(names_from = diagnosis, values_from = total_deaths) %>%
+  ungroup() %>%
+  kbl(
+    col.names = c(
+      sex = "Sex",
+      age_group = "Age Group",
+      year = "Year",
+      `Coronary Heart\nDisease` = "Coronary Heart Disease",
+      `Heart Attack` = "Heart Attack",
+      `Heart Failure` = "Heart Failure"
+    )
+  ) %>%
+  kable_styling() %>%
+  add_header_above(header = c("Heart Disease Mortality in Scotland 2015-2019" = 6)) %>%
+  footnote("Source: Public Health Scotland")
+```
+
+\pagebreak
+
+Hint: If you want to rearrange the columns order, you can do with `select()`
+
+```{r table-final-2, tidy.opts=list(width.cutoff=80)}
+mortality_plot %>%
+  pivot_wider(names_from = diagnosis, values_from = total_deaths) %>%
+  select(year, everything()) %>%
+  ungroup() %>%
+  kbl(
+    col.names = c(
+      "year" = "Year",
+      "sex" = "Sex",
+      "age_group" = "Age Group",
+      `Coronary Heart\nDisease` = "Coronary Heart Disease",
+      `Heart Attack` = "Heart Attack",
+      `Heart Failure` = "Heart Failure"
+    )
+  ) %>%
+  kable_styling() %>%
+  add_header_above(header = c("Heart Disease Mortality in Scotland 2015-2019" = 6)) %>%
+  footnote("Source: Public Health Scotland")
+```
