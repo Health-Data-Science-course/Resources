@@ -4,7 +4,7 @@ output:
 ---
 # Programming Assignment Instructions
 
-**Deadline: submit assignment by Monday 20th June 2022, 12 noon BST**
+**Deadline: submit assignment by Monday 28th November 2022, 12 noon BST**
 
 ### Background
 
@@ -22,7 +22,7 @@ Three data files are provided for your analysis:
 
 These are in CSV format and can be downloaded from the following link:
 
-* https://github.com/bblankinship/HDS_AY21-22_ProgAssignment 
+* https://github.com/Health-Data-Science-course/Resources/tree/main/Programming%20Main%20Assessment 
 
 Here is a link with more information on the variables in the dataset:
 
@@ -37,11 +37,11 @@ A few points to note about the dataset:
 
 The purpose of this assignment is to explore the injures datasets and answer the questions below.  To answer the questions you must use the datasets provided.  The R code used in all aspects of loading, processing, analysis and reporting must be visible in your final submission.  You are encouraged to include tables and figures to illustrate your report.  You can use any R packages of your choosing to create this report; you are not restricted to those discussed in the course.
 
-To help you get started we have included an example of a basic script which shows code for reading in the data plus some basic cleaning, plotting, and a table too.  Please feel free to write your own code if you prefer, or to change and build on the provided starting point.  All files related to the assignment, including the R Markdown file (`assignment_helper.Rmd`) and the example output from this file (`assignment_helper.pdf`) can be accessed [here](https://github.com/bblankinship/HDS_AY21-22_ProgAssignment).  
+To help you get started we have included an example of a basic script which shows code for reading in the data plus some basic cleaning, plotting, and a table too.  Please feel free to write your own code if you prefer, or to change and build on the provided starting point.  All files related to the assignment, including the R Markdown file (`assignment_helper.Rmd`) and the example output from this file (`assignment_helper.pdf`) can be accessed [here](https://github.com/Health-Data-Science-course/Resources/tree/main/Programming%20Main%20Assessment).  
 
 Alternatively, right click on the link below and click **Save link as...** to download the example R Markdown file directly to your own computer:
 
-* [assignment_helper.Rmd](https://github.com/bblankinship/HDS_AY21-22_ProgAssignment/blob/main/assignment_helper.Rmd)
+* [assignment_helper.Rmd](https://github.com/Health-Data-Science-course/Resources/blob/main/Programming%20Main%20Assessment/assignment_helper.Rmd)
 
 ### Report Questions
 
@@ -62,7 +62,7 @@ To carry out this assignment, you will need:
 * to make sure the following packages are installed: 
     + **rmarkdown** and **knitr** – for compiling the R Markdown document
     + **tidyverse** - for access to data wrangling and plotting functions you have learned in this course
-    + **gt** - for creating tables 
+    + **kableExtra** - for creating tables 
     + Optional: **janitor** - for cleaning up the variable names as they are read in from the CSV file
     
 If you have followed the course material you should already have most of these set up and ready to go.
@@ -94,12 +94,12 @@ There is a maximum **10 page** limit.
 Below are instructions concerning the submission of your programming assignment to Turnitin along with some further help videos for finding your way around Turnitin.
 
 * Your submission should be anonymous. Please include your **exam number** at the start of the Title box when asked for a **Title** after uploading your report in Turnitin.
-* Click on the link [**here**](https://www.learn.ed.ac.uk/webapps/turn-plgnhndl-BB5d1b15b77a8ac/links/submit.jsp?course_id=_91387_1&content_id=_7040919_1&orig_id=_7040919_1) to upload and submit your PDF report to Turnitin.  Alternatively, you will find the same link at the top of the Programming Assignment page in Learn.
+* Click on the link [**here**](https://www.learn.ed.ac.uk/ultra/courses/_99183_1/cl/outline) to upload and submit your PDF report to Turnitin.  Alternatively, you will find the same link at the top of the Programming Assignment page in Learn.
 
 Help videos for finding your way around Turnitin:
 
-* For a quick-start overview of Turnitin please refer to [this guide.](https://help.turnitin.com/feedback-studio/turnitin-website/student/quickstart.htm)
-* For a more detailed demonstration of the system, [this video should help.](https://media.ed.ac.uk/media/Turnitin%20Assignment%20Submission/1_bm0ygpjb)
+* For a quick-start overview of Turnitin please refer to [**this guide.**](https://help.turnitin.com/feedback-studio/turnitin-website/student/quickstart.htm)
+* For a more detailed demonstration of the system, [**this video should help.**](https://media.ed.ac.uk/media/Turnitin%20Assignment%20Submission/1_bm0ygpjb)
 
 ### Help
 

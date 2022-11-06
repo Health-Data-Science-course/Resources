@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, dpi = 300)
 ```{r packages}
 library(tidyverse)
 library(janitor)
-library(gt)
+library(kableExtra)
 ```
 
 ```{r read-in-data}
@@ -43,6 +43,6 @@ ui_admissions %>%
   group_by(injury_type, sex) %>% 
   summarise(total_admis = sum(number_of_admissions)) %>%
   ungroup() %>% 
-  gt()
+  kbl()
 ```
 
