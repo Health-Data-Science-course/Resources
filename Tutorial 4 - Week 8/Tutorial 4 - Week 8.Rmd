@@ -29,15 +29,26 @@ library(formatR)
 # very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long comment 
 ```
 
+```{r libraries2, message=FALSE, warning=FALSE}
+# Note: the above works for code generally and comments, but does not work for strings such as the URL. Additionally, don't forget to install the formatR package if you plan to use this! 
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(kableExtra)
+library(formatR)
+
+# very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long comment 
+```
+
 ## But first an aside...
 
 When knitting to PDF, you can wrap the code and comments using the `formatR` package and the arguments `tidy.opts=list(width.cutoff=80), tidy = TRUE` (see the output for the very...very long comment when knitted). However, this does not wrap strings, such as URLs due to LaTeX specific issues. There are very complicated ways around this, which we will not be covering as it requires other coding knowledge, but Kevin and Brittany have come up with 2 possible (though convoluted) solutions. For the Programming Assignment, the easiest solution may be to load the data from a saved file instead. 
 
-### Brittany's solution 
+### First solution 
 
 When you are writing code chunks and R leaves a blank space  in the line number when the code is wrapped (e.g. line 64, blank space, line 65). When knitting to HTML the knitted document reflects this, unfortunately not the case when knitting to PDF. To unwrap the code, click enter at the beginning of the link without the number. This **however** means that the URL is not longer able to run without error. So, in a convoluted work around, you could have a chunk set to `eval=FALSE` meaning the code is not run but the knitted document shows the code. Then you could include a chunk below which will actually load the data (i.e., the code is run) but not show this in the knitted document (`echo=FALSE`)... convoluted as I said. 
 
-```{r Brittany-load-data, eval=FALSE}
+```{r First-load-data, eval=FALSE}
 ## Read in the 3 datasets
 # Heart Disease Activity By Health Board
 activity_raw <- read_csv("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba
@@ -56,7 +67,7 @@ hb <- read_csv("https://www.opendata.nhs.scot/dataset/9f942fdb-e59e-44f5-b534-
 
 ```
 
-```{r Brittany-load-data-for-real, echo=FALSE, message=FALSE}
+```{r First-load-data-for-real, echo=FALSE, message=FALSE}
 activity_raw <- read_csv("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/748e2065-b447-4b75-99bd-f17f26f3eaef/download/hd_activitybyhbr.csv")
 
 mortality_raw <- read_csv("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/dc0512a8-eb49-43b9-84f1-17ef95365d57/download/hd_mortalitybyhbr.csv")
@@ -64,7 +75,7 @@ mortality_raw <- read_csv("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-4
 hb <- read_csv("https://www.opendata.nhs.scot/dataset/9f942fdb-e59e-44f5-b534-d6e17229cc7b/resource/652ff726-e676-4a20-abda-435b98dd7bdc/download/hb14_hb21.csv")
 ```
 
-### Kevin's solution 
+### Second solution 
 
 Kevin's solution is slightly different: for each data set, add a variable such as `link1, echo=FALSE` and then use it in the code to be printed. If you adopt this method, for reproducibility sake, in the text you could include the full URL to be printed out. For example: 
 
@@ -74,13 +85,13 @@ or
 
 >The hearth disease activity dataset downloads from [link1]("https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/748e2065-b447-4b75-99bd-f17f26f3eaef/download/hd_activitybyhbr.csv")
 
-```{r kevin-save-data, echo=FALSE}
+```{r Second-save-data, echo=FALSE}
 link1 <- "https://www.opendata.nhs.scot/dataset/0e17f3fc-9429-48aa-b1ba-2b7e55688253/resource/748e2065-b447-4b75-99bd-f17f26f3eaef/download/hd_activitybyhbr.csv"
 ```
 
 >Data from `r link1`
 
-```{r kevin-load-data, message=FALSE}
+```{r Second-load-data, message=FALSE}
 activity_raw2 <- read_csv(link1)
 ```
 
@@ -136,7 +147,7 @@ activity %>%
 
 ## Data Visualization 
 
-### How might we visualize the following: Since 2010, what influence does gender have on the rate of death for different diagnoses for those aged 75+ vs those under 75?
+### How might we visualize the following: Since 2015, what influence does gender have on the rate of death for different diagnoses for those aged 75+ vs those under 75?
 
 There are at least 2 different coding approaches you can take to this: 
 
@@ -235,13 +246,13 @@ Hint: If you want to rearrange the columns order, you can do with `select()`
 ```{r table-final-2, tidy.opts=list(width.cutoff=80)}
 mortality_plot %>%
   pivot_wider(names_from = diagnosis, values_from = total_deaths) %>%
-  select(year, everything()) %>%
+  select(year, age_group, everything()) %>%
   ungroup() %>%
   kbl(
     col.names = c(
       "year" = "Year",
-      "sex" = "Sex",
       "age_group" = "Age Group",
+      "sex" = "Sex",
       `Coronary Heart\nDisease` = "Coronary Heart Disease",
       `Heart Attack` = "Heart Attack",
       `Heart Failure` = "Heart Failure"
